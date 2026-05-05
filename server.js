@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 
 async function verifyTurnstile(token) {
-    const secret = "YOUR_SECRET_KEY";
+    const secret = "0x4AAAAAADJUZR0re2EAXZI8zJGf07gdbzc";
 
     const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
         method: "POST",
