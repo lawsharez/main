@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Cloudflare Verification</title>
+<title>Verification</title>
 
+<!-- Cloudflare Turnstile -->
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <style>
@@ -15,7 +16,6 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
-        color: #2c3e50;
     }
 
     .container {
@@ -28,7 +28,7 @@
         color: #4a4a4a;
     }
 
-    .captcha-box {
+    .box {
         background: #fff;
         border: 1px solid #dcdcdc;
         border-radius: 6px;
@@ -37,9 +37,14 @@
         box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
 
-    .cf-turnstile {
-        display: flex;
-        justify-content: center;
+    .status {
+        margin-top: 15px;
+        font-size: 14px;
+        color: #555;
+    }
+
+    .error {
+        color: red;
     }
 </style>
 </head>
@@ -50,24 +55,41 @@
         Verify you're human below to view the attachments
     </div>
 
-    <div class="captcha-box">
-        <!-- Replace YOUR_SITE_KEY -->
+    <div class="box">
+        <!-- Replace with your real site key -->
         <div class="cf-turnstile"
              data-sitekey="0x4AAAAAADJUZYAGT3n9wB8V"
              data-callback="onSuccess">
         </div>
+
+        <div class="status" id="statusMsg"></div>
     </div>
 </div>
 
 <script>
 function onSuccess(token) {
-    console.log("Verification success:", token);
+    const status = document.getElementById("statusMsg");
+    status.textContent = "Verifying...";
 
-    // Example action after verification
-    alert("Verification successful! You can now view attachments.");
+    fetch("/verify", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ token: token })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Verification failed");
+        }
 
-    // You could redirect:
-    // window.location.href = "/attachments.html";
+        // If backend sends a redirect, browser follows automatically
+        status.textContent = "Verification successful. Redirecting...";
+    })
+    .catch(err => {
+        status.textContent = "Verification failed. Please try again.";
+        status.classList.add("error");
+    });
 }
 </script>
 
