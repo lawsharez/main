@@ -71,7 +71,7 @@ function onSuccess(token) {
     const status = document.getElementById("statusMsg");
     status.textContent = "Verifying...";
 
-    fetch("/verify", {
+    fetch("/api/verify", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
